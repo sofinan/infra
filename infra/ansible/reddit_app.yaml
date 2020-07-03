@@ -1,0 +1,76 @@
+# Setup and configure ruby things for reddit app
+- name: "Reddit App: Configure app environment"
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - name: Install ruby and rubygems and required packages
+    apt: "name={{ item }} state=present"
+    with_items:
+      - ruby-full
+      - ruby-dev
+      - build-essential
+
+  - name: Install Ruby bundler
+    gem:
+      name: bundler
+      state: present
+      user_install: no
+
+# Setup and configure mongodb for reddit app
+- name: "Reddit App: Install mongodb"
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - name: add key
+    apt_key:
+      keyserver: hkp://keyserver.ubuntu.com:80
+      id: D68FA50FEA312927
+      state: present
+
+  - name: Add repo
+    apt_repository:
+      repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
+      state: present
+      filename: /etc/apt/sources.list.d/mongodb-org-3.2.list  
+
+  - name: Install mongodb package
+    apt:
+      name: mongodb
+      state: present
+      update_cache: yes
+
+# Deploy reddit app
+- name: "Reddit App: Deploy application"
+  hosts: all
+  gather_facts: no
+
+  tasks:
+  - name: get repo
+    git:
+      repo: https://github.com/Artemmkin/reddit.git
+      dest: /home/sofinan/reddit
+  - name: update gems
+    bundler:
+       state: present
+       gemfile: /home/sofinan/reddit/Gemfile
+
+
+- name: "Reddit App: Deploy application"
+  hosts: all
+  gather_facts: no
+  become: yes
+  
+  tasks: 
+  - name: copy startup file
+    copy:
+      src: ../terraform/files/puma.service
+      dest: /etc/systemd/system/puma.service 
+  
+  - name: enable service puma
+    systemd:
+      name: puma.service
+      enabled: yes

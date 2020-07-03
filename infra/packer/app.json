@@ -1,0 +1,15 @@
+{
+	"builders": [{
+			"type": "googlecompute",
+			"project_id": "infra-279806",
+			"image_name": "reddit-base-{{timestamp}}",
+			"source_image": "ubuntu-1604-xenial-v20200529",
+			"zone": "europe-west1-b",
+			"ssh_username": "sofinan",
+			"machine_type": "f1-micro"
+		}],
+	"provisioners": [{
+		"type": "shell",
+		"script": "scripts/install_ruby.sh"
+	}]
+}
