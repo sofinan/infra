@@ -1,0 +1,27 @@
+---
+- name: Deploy
+  hosts: app
+  tags: deploy-tags
+  tasks:
+    - name: Fetch the latest version of application code
+      git:
+         repo: 'https://github.com/Artemmkin/reddit.git'
+         dest: /home/sofinan/reddit
+         version: monolith
+
+    - name: Install ruby dev
+      become: true
+      apt:
+        name: ruby-dev
+        state: latest
+
+    - name: Bundle Install
+      bundler:
+        state: present
+        chdir: /home/sofinan/reddit
+      notify: restart puma        
+   
+  handlers:
+  - name: restart puma
+    become: true
+    systemd: name=puma state=restarted
