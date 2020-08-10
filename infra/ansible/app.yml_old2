@@ -3,6 +3,9 @@
   hosts: app
   tags: app-tag
   become: true
+
+  vars:
+    db_host: 10.132.0.61
   
   roles:
     - app

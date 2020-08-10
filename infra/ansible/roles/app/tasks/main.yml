@@ -16,3 +16,6 @@
 - name: enable puma
   systemd: name=puma enabled=yes
 
+- name: Show info abouit the env this host belongs to
+  debug:
+    msg: "!!!{{ env }}!!!"
