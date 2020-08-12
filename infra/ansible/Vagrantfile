@@ -1,0 +1,23 @@
+Vagrant.configure("2") do |config|
+  
+  config.vm.box = 'gce'
+   
+  config.vm.provider :google do |google, override|
+    google.google_project_id = "infra-279806"
+    #google.google_client_email = "PROJECT_ID_SERVICE_ACCOUNT@developer.gserviceaccount.com"
+    google.google_json_key_location = "/home/sofinan/infra-279806-7c74e3f73dc1.json"
+    # Define the name of the instance.
+    google.name = "devel"
+    # Set the zone where the instance will be located. To find out available zones:
+    # `gcloud compute zones list`.
+    google.zone = "asia-east1-c"
+    # Set the machine type to use. To find out available types:
+    # `gcloud compute machine-types list --zone asia-east1-c`.
+    google.machine_type = "n1-standard-2"
+    # Set the machine image to use. To find out available images:
+    # `$ gcloud compute images list`.
+    google.image = "ubuntu-1804-bionic-v20200317"
+    override.ssh.username = "sofinan"
+    override.ssh.private_key_path = "/home/sofinan/appuser"
+  end
+end
